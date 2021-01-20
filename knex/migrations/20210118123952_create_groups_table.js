@@ -1,11 +1,9 @@
 
-exports.up = function (knex) {
-    return knex.schema.createTable('groups', function (table) {
+exports.up = knex => {
+    return knex.schema.createTable('groups', table => {
         table.increments('gid').unsigned().primary()
         table.string('group_name').notNull()
     })
 }
 
-exports.down = function (knex) {
-    return knex.schema.dropTable('groups')
-}
+exports.down = knex => knex.schema.dropTable('groups')

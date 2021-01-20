@@ -1,16 +1,14 @@
 
-exports.up = function (knex) {
-    return knex.schema.createTable('orders', function (table) {
+exports.up = knex => {
+    return knex.schema.createTable('orders', table => {
         table.increments('oid').unsigned().primary()
         table.integer('uid').unsigned()
         table.foreign('uid').references('users.uid').onDelete('SET NULL')
         table.integer('pid').unsigned()
         table.foreign('pid').references('partners.pid').onDelete('SET NULL')
         table.integer('iid').unsigned()
-        table.foreign('iid').references('items.iid').onDelete('NO ACTION')
+        table.foreign('iid').references('items.iid').onDelete('SET NULL')
     })
 }
 
-exports.down = function (knex) {
-    return knex.schema.dropTable('orders')
-}
+exports.down = knex => knex.schema.dropTable('orders')

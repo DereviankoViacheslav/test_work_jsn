@@ -1,32 +1,35 @@
+const faker = require('faker')
 
-const generateNumber = (max) => {
-  return Math.floor(Math.random() * Math.floor(max + 1))
-}
+const NUMBER_USERS = 200000
+const NUMBER_DUPLICATE_FIRST_VALUE_IP = 10000
+const REGISTRATION_DATE_START = new Date('2017-01-01')
+const REGISTRATION_DATE_END = new Date('2017-12-31')
+const LAST_VISIT_DATE_START = new Date('2018-01-01')
+const LAST_VISIT_DATE_END = new Date('2018-12-31')
 
-const generateUsers = (number) => {
+const generateNumber = max => Math.floor(Math.random() * Math.floor(max + 1))
+
+const generateUsers = number => {
   const users = []
   let counterRepeatIP = 0
   let firstNumberIP = 0
   for (let i = 0; i < number; i++) {
-    firstNumberIP = counterRepeatIP % 10000 === 0 ? generateNumber(255) : firstNumberIP
+    firstNumberIP = counterRepeatIP % NUMBER_DUPLICATE_FIRST_VALUE_IP === 0 ? generateNumber(255) : firstNumberIP
     counterRepeatIP++
     users.push({
-      login: `User${i}`,
-      password: `${i}`,
+      login: faker.name.findName(),
+      password: faker.internet.password(),
       ip: `${firstNumberIP}.${generateNumber(255)}.${generateNumber(255)}.${generateNumber(255)}`,
-      is_active: i % 2 === 0 ? false : true
+      is_active: faker.random.boolean(),
+      registration_date: faker.date.between(REGISTRATION_DATE_START, REGISTRATION_DATE_END),
+      last_visit_date: faker.date.between(LAST_VISIT_DATE_START, LAST_VISIT_DATE_END),
     })
   }
   return users
 }
 
-exports.seed = function (knex) {
+exports.seed = knex => knex('users')
   // Deletes ALL existing entries
-  return knex('users')
-    .del()
-    .then(function () {
-      // Inserts seed entries
-      return knex.batchInsert('users', [ ...generateUsers(200000) ], 100)
-    })
-    .catch(err => console.log(err))
-}
+  .del()
+  .then(() => knex.batchInsert('users', [...generateUsers(NUMBER_USERS)], 10000))
+  .catch(err => console.log(err))

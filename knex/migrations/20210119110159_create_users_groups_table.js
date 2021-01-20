@@ -1,6 +1,6 @@
 
-exports.up = function (knex) {
-    return knex.schema.createTable('users_groups', function (table) {
+exports.up = knex => {
+    return knex.schema.createTable('users_groups', table => {
         table.integer('uid').unsigned()
         table.foreign('uid').references('users.uid').onDelete('CASCADE')
         table.integer('gid').unsigned()
@@ -9,6 +9,4 @@ exports.up = function (knex) {
     })
 }
 
-exports.down = function (knex) {
-    return knex.schema.dropTable('users_groups')
-}
+exports.down = knex => knex.schema.dropTable('users_groups')
